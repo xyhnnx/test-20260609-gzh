@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>train.py · Cluster-A100 · run-2026.06.10</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/boss.css" />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🧠</text></svg>" />
+</head>
+<body>
+
+<!-- ============ 摸鱼伪装态：训练监控面板 ============ -->
+<div class="busy-mode" id="busyMode">
+
+  <!-- 顶部状态栏：假装是 tmux / VSCode 状态栏 -->
+  <header class="statusbar">
+    <span class="seg seg-host">user@cluster-a100:~/projects/llm-pretrain-v7</span>
+    <span class="seg seg-py">🐍 python 3.11 · torch 2.5 · CUDA 12.4</span>
+    <span class="seg seg-model">model: <b>MoonLight-32B-v0.7</b></span>
+    <span class="seg seg-spinner"><span class="spinner"></span> training</span>
+    <span class="seg seg-clock" id="hudClock">--:--:--</span>
+  </header>
+
+  <!-- 三栏主体 -->
+  <main class="grid">
+
+    <!-- 左栏：Matrix 字符雨 -->
+    <section class="col col-rain">
+      <div class="col-title">▌ NEURAL_STREAM</div>
+      <canvas id="rain"></canvas>
+    </section>
+
+    <!-- 中栏：训练日志流 -->
+    <section class="col col-log">
+      <div class="col-title">▌ STDOUT · train.py</div>
+      <div class="log" id="log"></div>
+    </section>
+
+    <!-- 右栏：SVG 曲线 + 进度面板 -->
+    <section class="col col-chart">
+      <div class="col-title">▌ METRICS</div>
+
+      <div class="chart-card">
+        <div class="chart-head">
+          <span class="legend"><i class="dot dot-loss"></i>loss</span>
+          <span class="legend"><i class="dot dot-acc"></i>val/acc</span>
+          <span class="cur" id="curLoss">loss = ----</span>
+        </div>
+        <svg id="lossChart" viewBox="0 0 600 220" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="prog-card">
+        <div class="prog-line">
+          <span class="prog-label">Epoch</span>
+          <span class="prog-val" id="epochVal">0 / 100</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="epochFill"></div></div>
+
+        <div class="prog-line">
+          <span class="prog-label">Step</span>
+          <span class="prog-val" id="stepVal">0 / 100000</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="stepFill"></div></div>
+
+        <div class="gpu-list" id="gpuList"></div>
+
+        <div class="eta-line">
+          <span>ETA</span>
+          <span class="eta-val" id="etaVal">--:--:--</span>
+          <span>·</span>
+          <span>LR</span>
+          <span class="eta-val" id="lrVal">--</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 右下角浮层：声音 / 老板键说明 -->
+  <div class="hint">
+    <button id="muteBtn" title="键盘音">🔇 SOUND OFF</button>
+    <span class="hint-key">按 <kbd>`</kbd> 切换老板模式</span>
+  </div>
+
+  <!-- 扫描线滤镜（纯装饰） -->
+  <div class="scanlines"></div>
+</div>
+
+<!-- ============ 老板键态：严肃技术文档页 ============ -->
+<div class="boss-mode" id="bossMode" hidden>
+  <header class="bm-header">
+    <div class="bm-logo">📘 公司内部技术文档 / 微服务架构演进指南 v3.2</div>
+    <nav class="bm-nav">
+      <a class="active">概述</a><a>分层架构</a><a>限流降级</a><a>可观测性</a><a>安全合规</a><a>附录</a>
+    </nav>
+  </header>
+
+  <main class="bm-main">
+    <aside class="bm-aside">
+      <ul>
+        <li class="bm-on">1. 背景与目标</li>
+        <li>2. 现状评估</li>
+        <li>3. 服务边界划分</li>
+        <li>4. 数据一致性策略</li>
+        <li>5. 异步消息选型</li>
+        <li>6. 配置中心规范</li>
+        <li>7. 灰度发布流程</li>
+        <li>8. 监控告警体系</li>
+        <li>9. 容量评估</li>
+        <li>10. 风险与回滚</li>
+      </ul>
+    </aside>
+
+    <article class="bm-article">
+      <h1>1. 背景与目标</h1>
+      <p>随着业务规模快速扩张，单体架构在<b>可维护性、扩展性、容错性</b>三个维度上已逐步暴露瓶颈。为支撑未来三年业务增长，技术中台决定对核心交易链路进行微服务化拆分。本指南旨在为各业务线提供统一的演进方法论、技术选型基线以及落地checklist。</p>
+
+      <h2>1.1 主要痛点</h2>
+      <ul>
+        <li>发布周期长，平均一次上线需协调 6+ 团队，回滚成本高；</li>
+        <li>故障爆炸半径大，任一非核心模块异常即可拖垮主链路；</li>
+        <li>研发效率边际下降，新功能从需求到上线周期超过两周；</li>
+        <li>资源利用率分布失衡，部分模块长期 CPU 不足 8%，部分模块持续报警。</li>
+      </ul>
+
+      <h2>1.2 演进原则</h2>
+      <p>所有改造工作必须遵循以下三条铁律：<b>业务无感、可灰度、可回滚</b>。具体来说，任何一次拆分都必须满足：上游调用方零代码改动（通过适配层兼容）、流量按租户/比例可控放量、出现故障 5 分钟内可一键切回原链路。</p>
+
+      <pre><code>service.deploy.strategy = canary
+service.deploy.fallback = legacy-monolith
+service.deploy.grayRatio = [1%, 5%, 25%, 50%, 100%]
+service.deploy.observeWindow = 30m</code></pre>
+
+      <h2>1.3 阶段路标</h2>
+      <p>整体演进分为四个阶段：基础设施就绪（Q1）、核心域拆分（Q2-Q3）、读写分离与异步化（Q4）、跨域治理与降本（次年）。各阶段需有量化退出标准，避免无限期返工。本章节后续将逐项展开。</p>
+
+      <p style="color:#888">— 本文档由 架构治理小组 维护，最近更新：2026/06/10 14:32:11 —</p>
+    </article>
+  </main>
+</div>
+
+<!-- ============ 脚本（顺序加载，无构建） ============ -->
+<script src="scripts/matrix-rain.js"></script>
+<script src="scripts/audio.js"></script>
+<script src="scripts/loss-chart.js"></script>
+<script src="scripts/progress.js"></script>
+<script src="scripts/log-stream.js"></script>
+<script src="scripts/boss-key.js"></script>
+<script>
+  // 顶部时钟
+  function tickClock() {
+    var d = new Date();
+    var pad = function(n){return n<10?'0'+n:n;};
+    document.getElementById('hudClock').textContent =
+      pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+  setInterval(tickClock, 1000); tickClock();
+</script>
+</body>
+</html>

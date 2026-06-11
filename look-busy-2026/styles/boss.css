@@ -1,0 +1,115 @@
+/* ====================================================================
+   boss.css — 老板键切换出的"严肃文档页"
+   要求：白底黑字、像 confluence / 公司 wiki、绝不暴露任何赛博绿
+   ==================================================================== */
+
+.boss-mode {
+  position: fixed; inset: 0;
+  background: #f7f8fa;
+  color: #1f2329;
+  font-family: -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size: 14px;
+  z-index: 100;
+  overflow: auto;
+  user-select: text;
+  cursor: auto;
+}
+
+.bm-header {
+  position: sticky; top: 0;
+  background: #fff;
+  border-bottom: 1px solid #e6e8eb;
+  padding: 10px 24px 0;
+  z-index: 2;
+}
+.bm-logo {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+.bm-nav {
+  display: flex;
+  gap: 22px;
+  font-size: 13px;
+}
+.bm-nav a {
+  display: inline-block;
+  padding: 8px 2px;
+  color: #4d5158;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.bm-nav a.active {
+  color: #1664ff;
+  border-bottom-color: #1664ff;
+  font-weight: 500;
+}
+.bm-nav a:hover { color: #1664ff; }
+
+.bm-main {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 24px 60px;
+  gap: 28px;
+}
+
+.bm-aside {
+  position: sticky;
+  top: 80px;
+  height: max-content;
+  padding: 12px 0;
+  font-size: 13px;
+  color: #4d5158;
+  border-right: 1px solid #eee;
+}
+.bm-aside ul { list-style: none; padding: 0; }
+.bm-aside li {
+  padding: 7px 14px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.bm-aside li:hover { background: #f2f5fa; }
+.bm-aside li.bm-on {
+  color: #1664ff;
+  border-left-color: #1664ff;
+  background: #eef4ff;
+  font-weight: 500;
+}
+
+.bm-article {
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 4px;
+  padding: 28px 36px;
+  line-height: 1.78;
+  color: #2c3038;
+}
+.bm-article h1 {
+  font-size: 22px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.bm-article h2 {
+  font-size: 16px;
+  margin: 18px 0 8px;
+  color: #1f2329;
+}
+.bm-article p { margin: 8px 0; }
+.bm-article ul { margin: 6px 0 6px 24px; }
+.bm-article b { color: #1f2329; }
+.bm-article pre {
+  background: #f5f7fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-family: Consolas,"JetBrains Mono",monospace;
+  font-size: 12.5px;
+  color: #444;
+  margin: 10px 0;
+  overflow-x: auto;
+}
